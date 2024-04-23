@@ -1,0 +1,20 @@
+name: vesuvius-compare
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - numpy=1.26.3
+  - flask=2.2.5
+  - scipy=1.11.4
+  - pytorch=2.2.0
+  - zarr=2.13.3
+  - tifffile=2023.4.12
+  - SimpleITK=2.3.1
+  - tqdm=4.65.0
+  - scikit-image=0.22.0
+  - pip:
+      - open3d

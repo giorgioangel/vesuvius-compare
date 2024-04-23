@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <title>Vesuvius Compare</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/styles/main.css">
+</head>
+<body>
+    <div id="center-container">
+        <select id="methodA">
+            <option value="ThaumatoAnakalyptor">ThaumatoAnakalyptor</option>
+            <!-- Additional methods can be added here -->
+        </select>
+        <select id="methodB">
+            <option value="ThaumatoAnakalyptor">ThaumatoAnakalyptor</option>
+            <!-- Additional methods can be added here -->
+        </select>
+        <label>Radius:<input type="number" id="radius" placeholder="Enter radius" min="30" max="500" step="10"></label>
+        <button id="sampleButton">Sample and generate</button>
+    </div>
+    <div id="manualCenterInput">
+        <label>Z: <input type="number" id="centerZ" placeholder="Enter Z" min="500" max="14000" step="1"></label>
+        <label>Y: <input type="number" id="centerY" placeholder="Enter Y" min="500" max="7500" step="1"></label>
+        <label>X: <input type="number" id="centerX" placeholder="Enter X" min="500" max="8000" step="1"></label>
+        <button id="generateButton">Generate at these coordinates</button>
+    </div>
+    <div id="loading" class="sub-title">Generating...</div>
+
+    <div id="dataVisualization">
+        <div id="commonSlicesVisualizer">
+            <div class="sub-title">Volume</div>
+            <iframe id="vviewer0" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            <!-- <div id="commonSlices" class="image-container"></div>-->
+        </div>
+        <div id="methodSpecificVisualizer-container">
+            <div class="method-container">
+                <div id="methodA-title" class="sub-title"></div>
+                <iframe id="vviewer1" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+                <!-- <div id="params-container1" class="parameters-container"></div> -->
+                <div class="sub-title">Point Cloud A</div>
+                <label for="sizeSlider1">Size: </label>
+                <input type="range" id="sizeSlider1" min="0.5" max="2" value="1" step="0.5">
+                <div id="leftVisualizer" class="point-cloud-container"></div>
+            </div>
+            <div class="method-container">
+                <div id="methodB-title" class="sub-title"></div>
+                <iframe id="vviewer2" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+                <!-- <div id="params-container2" class="parameters-container"></div> -->
+                <div class="sub-title">Point Cloud B</div>
+                <label for="sizeSlider2">Size: </label>
+                <input type="range" id="sizeSlider2" min="0.5" max="2" value="1" step="0.5">
+                <div id="rightVisualizer" class="point-cloud-container"></div>
+            </div>
+            <div id="metricsDisplay" class="sub-title"></div>
+        </div>
+        <input type="hidden" id="currentHash" value="">
+    </div>
+    <div id="votePanel" class="sub-title" style="display: none;">
+        <button onclick="vote('1')">Vote A</button>
+        <button onclick="vote('2')">Vote B</button>
+    </div>
+    <script src="/static/scripts/main.js"></script>
+</body>
+</html>

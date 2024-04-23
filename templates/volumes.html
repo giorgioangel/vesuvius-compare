@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="/static/styles/volumes.css">
+	</head>
+
+	<body>
+		<div id="inset"></div>
+		<script type="importmap">
+			{
+			  "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+				"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+			  }
+			}
+		</script>
+		<script type="module">
+			import * as THREE from 'three';
+			import Stats from 'three/addons/libs/stats.module.js';
+			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+			import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+			import { NRRDLoader } from 'three/addons/loaders/NRRDLoader.js';
+	
+			let stats, camera, controls, scene, renderer, gui;
+	
+			function getQueryStringValue(key) {
+				const urlParams = new URLSearchParams(window.location.search);
+				return urlParams.get(key);
+			}
+	
+			document.addEventListener("DOMContentLoaded", function() {
+				init();
+				animate();
+			});
+	
+			function init() {
+				const volumePath = getQueryStringValue('volume');
+				const myPath = `/files/${volumePath}`;
+	
+				camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1e10);
+				camera.position.z = 300;
+	
+				scene = new THREE.Scene();
+				scene.add(camera);
+	
+				const hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 3);
+				scene.add(hemiLight);
+	
+				const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+				dirLight.position.set(200, 200, 200);
+				scene.add(dirLight);
+	
+				const loader = new NRRDLoader();
+				loader.load(myPath, function(volume) {
+					const boxHelper = new THREE.BoxHelper(new THREE.Mesh(
+						new THREE.BoxGeometry(volume.xLength, volume.yLength, volume.zLength),
+						new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false})
+					));
+					boxHelper.applyMatrix4(volume.matrix);
+					scene.add(boxHelper);
+					
+					['x', 'y', 'z'].forEach((axis, i) => {
+						const slice = volume.extractSlice(axis, Math.floor(volume.RASDimensions[i] / 2));
+						scene.add(slice.mesh);
+						gui.add(slice, 'index', 0, volume.RASDimensions[i], 1).name(axis).onChange( function () {
+							slice.repaint.call(slice);
+						})
+					});
+					setupGUI(volume);
+				});
+	
+				renderer = new THREE.WebGLRenderer({antialias: true});
+				renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				document.body.appendChild(renderer.domElement);
+	
+				controls = new TrackballControls(camera, renderer.domElement);
+				controls.minDistance = 100;
+				controls.maxDistance = 500;
+				controls.rotateSpeed = 5.0;
+				controls.zoomSpeed = 5;
+				controls.panSpeed = 2
+				stats = new Stats();
+				document.body.appendChild(stats.dom);
+	
+				gui = new GUI();
+	
+				window.addEventListener('resize', onWindowResize);
+			}
+	
+			function setupGUI(volume) {
+				gui.add(volume, 'lowerThreshold').min(volume.min).max(volume.max).step(1).name('Threshold').onChange( function () {
+					volume.repaintAllSlices();
+				});
+			}
+	
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				controls.handleResize();
+			}
+	
+			function animate() {
+				requestAnimationFrame(animate);
+				controls.update();
+				renderer.render(scene, camera);
+				stats.update();
+			}
+		</script>
+	</body>
+	

@@ -1,0 +1,16 @@
+{
+    "ThaumatoAnakalyptor": {
+        "volume_path": "D:/vesuvius/Scroll1.volpkg/volume_grids/20230205180739/",
+        "center": [9187, 2650, 2600],
+        "radius": 30,
+        "device": "cpu",
+        "global_reference_vector": [0, -1, 0],
+        "blur_size": 11,
+        "sobel_chunks": 4,
+        "sobel_overlap": 3,
+        "window_size": 2,
+        "stride": 2,
+        "threshold_der": 0.1,
+        "threshold_der2": 0.001
+    }
+}
