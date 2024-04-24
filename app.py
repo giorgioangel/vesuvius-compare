@@ -72,6 +72,8 @@ def generate_point_clouds():
     else:
         center = random_center([14000, 7500, 8000])
 
+    config1['center'] = center
+    config2['center'] = center
     config1['radius'] = radius
     config2['radius'] = radius
 
